@@ -1,7 +1,7 @@
 <?php session_start(); ?>
 <?php
 ob_start();
-include '/home1/murvetop/includes/sqlcall.php';
+include 'includes/sqlcall.php';
 
    $username= filter_input(INPUT_POST, 'userid');
    $password = filter_input(INPUT_POST, 'userpassword');
@@ -40,7 +40,7 @@ function isAuthentic($user, $pswd)
 {
    // Query database to see if the name and password are valid
 
-include '/home1/murvetop/includes/sqlcall.php';
+include 'includes/sqlcall.php';
 
    $query = "SELECT Username,Password FROM accounts WHERE Username='$user' "
             ." AND Password ='$pswd'";
@@ -56,7 +56,7 @@ include '/home1/murvetop/includes/sqlcall.php';
 <?php
 function go_to_home($user)
 {
-include '/home1/murvetop/includes/sqlcall.php';
+include 'includes/sqlcall.php';
    $sql = "SELECT ID FROM accounts  WHERE Username='$user'";
 $result = $db_link->query($sql);
 $service = $result->fetch_assoc();

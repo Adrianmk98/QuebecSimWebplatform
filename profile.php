@@ -5,14 +5,14 @@ if (!(isset($_SESSION['loggedin'])))//FLIP AFTER DONE
    die();
 }else
 {
-   include '/home1/murvetop/includes/sqlcall.php';
+   include 'includes/sqlcall.php';
 $pid=$_SESSION["loggedin"];
 $sqlhours = "UPDATE user SET hoursinactive =0 WHERE ID='$pid'";
         mysqli_query($db_link, $sqlhours);
 }?>
  <html>
      <header>
-         <script data-ad-client="ca-pub-1808295948776802" async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+
 <title>Profile
 </title>
 <?php
@@ -118,7 +118,7 @@ $mails = $mails['COUNT(seen)'];
 ?> 
 <body>
     <?php
-    include '/home1/murvetop/includes/topbar.php';
+    include 'includes/topbar.php';
 ?>
 
 

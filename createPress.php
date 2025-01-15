@@ -20,8 +20,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $createdAt = date('Y-m-d H:i:s');  // Get current timestamp
 
     // Prepare and execute the SQL statement, including createdAt for the timestamp
-    $stmt = $db_link->prepare("INSERT INTO `press` (`pressFlairID`, `pressTitle`, `pressContent`, `createdAt`) VALUES (?, ?, ?, ?)");
-    $stmt->bind_param("isss", $pressFlairID, $pressTitle, $pressContent, $createdAt);
+    $stmt = $db_link->prepare("INSERT INTO `press` (`pressFlairID`, `pressTitle`,`AuthorID`, `pressContent`, `createdAt`) VALUES (?, ?, ?, ?)");
+    $stmt->bind_param("isss", $pressFlairID, $pressTitle,$pid, $pressContent, $createdAt);
 
     if ($stmt->execute()) {
         echo "<p>Press entry created successfully!</p>";

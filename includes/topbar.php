@@ -98,9 +98,22 @@ body {
   color: white;
 }
 body {
-  margin: 0;
-  font-family: Arial, Helvetica, sans-serif;
-  background: lightblue url("background.jpg") no-repeat fixed center; 
+    margin: 0;
+    font-family: Arial, Helvetica, sans-serif;
+    position: relative;
+    background-color: ; /* Fallback solid color */
+}
+
+body::after {
+    content: "";
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: url("background.jpg") no-repeat center center / cover;
+    opacity: 0.6; /* Set transparency of the background image */
+    z-index: -1; /* Ensure the background is behind content */
 }
 
 .navbar {
@@ -244,7 +257,9 @@ table.blueTable tr:nth-child(even) {
   max-width: 450px;
   margin: auto;
   text-align: center;
+    background-color: #ddd;
   font-family: arial;
+    opacity: 0.85;
 }
 
 .title {

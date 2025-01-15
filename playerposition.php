@@ -5,8 +5,8 @@ if (!(isset($_SESSION['loggedin'])))
    // die();
 }else
 {
-    include '/home1/murvetop/includes/sqlcall.php';
-    include '/home1/murvetop/includes/topbar.php';
+    include 'includes/sqlcall.php';
+    include 'includes/topbar.php';
 $pid=$_SESSION["loggedin"];
 $sqlhours = "UPDATE user SET hoursinactive =0 WHERE ID='$pid'";
         mysqli_query($db_link, $sqlhours);
@@ -17,8 +17,7 @@ $sqlhours = "UPDATE user SET hoursinactive =0 WHERE ID='$pid'";
     <title>Player Positions
 </title>
     <head>
-        <script data-ad-client="ca-pub-1808295948776802" async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
-        <div style="padding-left:16px">
+          <div style="padding-left:16px">
 </div>
    <body>
 <div class="card">

@@ -5,8 +5,8 @@ if (!(isset($_SESSION['loggedin'])))
    die();
 }else
 {
-    include '/home1/murvetop/includes/sqlcall.php';
-    include '/home1/murvetop/includes/topbar.php';
+    include 'includes/sqlcall.php';
+    include 'includes/topbar.php';
 $pid=$_SESSION["loggedin"];
 $sqlhours = "UPDATE user SET hoursinactive =0 WHERE ID='$pid'";
         mysqli_query($db_link, $sqlhours);
@@ -31,32 +31,38 @@ $state = $mystate['state'];
 
 $state=$_GET['state'];
 
-$sql = "SELECT cname FROM user  WHERE state='$state' && positionid=1";
-$result = $db_link->query($sql)or die($db_link->error);
-$cname = $result->fetch_assoc();
-$cnamegov = $cname['cname'];
+// Array to store data by position
+$data = [];
 
-$pic = "SELECT cpic FROM user  WHERE state='$state' && positionid=1";
-$result = $db_link->query($pic)or die($db_link->error);
-$cpic = $result->fetch_assoc();
-$cpicgov = $cpic['cpic'];
-$sql = "SELECT cname FROM user  WHERE state='$state' && positionid=2";
-$result = $db_link->query($sql)or die($db_link->error);
-$cname = $result->fetch_assoc();
-$cnames1 = $cname['cname'];
-$pic = "SELECT cpic FROM user  WHERE state='$state' && positionid=2";
-$result = $db_link->query($pic)or die($db_link->error);
-$cpic = $result->fetch_assoc();
-$cpics1 = $cpic['cpic'];
+// Loop through position IDs 1 to 3
+for ($positionid = 1; $positionid <= 3; $positionid++) {
+    // Query to fetch cname and cpic together
+    $sql = "SELECT cname, cpic FROM user WHERE state='$state' AND positionid=$positionid";
+    $result = $db_link->query($sql) or die($db_link->error);
 
-$sql = "SELECT cname FROM user  WHERE state='$state' && positionid=3";
-$result = $db_link->query($sql)or die($db_link->error);
-$cname = $result->fetch_assoc();
-$cnames2 = $cname['cname'];
-$pic = "SELECT cpic FROM user  WHERE state='$state' && positionid=3";
-$result = $db_link->query($pic)or die($db_link->error);
-$cpic = $result->fetch_assoc();
-$cpics2 = $cpic['cpic'];
+    // Check if a result exists
+    if ($result && $row = $result->fetch_assoc()) {
+        $data[$positionid] = [
+            'cname' => $row['cname'] ?? null,
+            'cpic' => $row['cpic'] ?? null
+        ];
+    } else {
+        // Default to null if no result
+        $data[$positionid] = [
+            'cname' => null,
+            'cpic' => null
+        ];
+    }
+}
+
+// Access data
+$cnamegov = $data[1]['cname'];
+$cpicgov = $data[1]['cpic'];
+$cnames1 = $data[2]['cname'];
+$cpics1 = $data[2]['cpic'];
+$cnames2 = $data[3]['cname'];
+$cpics2 = $data[3]['cpic'];
+
 
 
 ?>
@@ -163,58 +169,8 @@ $pid = $pid['partyid'];
                   
                   <form action="<?php echo $self ?>?state=<?php echo $state ?>" method="POST">
                      
-                     
-<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
-    <script type="text/javascript">
-      google.charts.load('current', {'packages':['corechart']});
-      google.charts.setOnLoadCallback(drawChart);
-
-      function drawChart() {
-
-        <?php
-
-$state=$_GET['state'];
-$statelower=strtolower("$state");
-$statelower='i'.$statelower;
-$paridnames = "SELECT pname,$statelower,partycolour FROM parties WHERE $statelower>0";
-$result = $db_link->query($paridnames)or die($db_link->error);
 
 
-        ?>
-        var data = google.visualization.arrayToDataTable([
-            ['Party Name','Party Influence'],
-            <?php
-            while($row = mysqli_fetch_assoc($result))
-            {
-                echo "['".$row['pname']."',".$row[$statelower]."],";
-            }
-            ?>
-          ]);
-
-        var options = {
-         
-          sliceVisibilityThreshold: .1,
-          legend: 'none',
-          backgroundColor:'none',
-        slices:{
-          <?php
-          $count=0;
-          $paridnames = "SELECT pname,$statelower,partycolour FROM parties WHERE $statelower>0";
-          $result = $db_link->query($paridnames)or die($db_link->error);
-         while($row = mysqli_fetch_assoc($result))
-            {
-         echo $count." : { color : '".$row['partycolour']."'},";
-         $count=$count+1;
-         }
-         ?>
-        }
-        };
-
-        var chart = new google.visualization.PieChart(document.getElementById('influencechart'));
-
-        chart.draw(data, options);
-      }
-    </script>
 <div id="influencechart" style="width: 300px; height: 200px;"></div>
 
                      <table class="bluesTable">
@@ -241,44 +197,24 @@ $result = $db_link->query($paridnames)or die($db_link->error);
                       
                       
                       ?> <br> <?php
-                      echo "Time until election ".$gtime;
                       ?>
                   </td>
                   <td>
                       Senator <br>
                       <img src="https://i.imgur.com/<?php echo $cpics1; ?>" alt="Character" max-width="100" height="64"><br>
-                      <?php
-                      
-                      $sen1id = "SELECT ID FROM user  WHERE cname='$cnames1'";
-                        $result = $db_link->query($sen1id)or die($db_link->error);
-                        $idSen1 = $result->fetch_assoc();
-                        $idSen1 = $idSen1['ID'];
-                        ?>
                       <a href="profile.php?id=<?php echo $idSen1 ?>"><?php echo $cnames1 ?></a>
                       <?php
                       
                       
-                      ?> <br> <?php
-                      echo "Time until election ".$sstime;
-                      ?>
+                      ?> <br>
                   </td>
                   <td>
                       Senator <br>
                       <img src="https://i.imgur.com/<?php echo $cpics2; ?>" alt="Character" max-width="100" height="64"><br>
-                    <?php 
-                    
-                    $sen2id = "SELECT ID FROM user  WHERE cname='$cnames2'";
-                        $result = $db_link->query($sen2id)or die($db_link->error);
-                        $idSen2 = $result->fetch_assoc();
-                        $idSen2 = $idSen2['ID'];
-                        ?>
                       <a href="profile.php?id=<?php echo $idSen2 ?>"><?php echo $cnames2 ?></a>
                       <?php
                     
-                    ?> <br> <?php
-
-                      echo "Time until election ".$jstime;
-                      ?>
+                    ?> <br>
                   </td></tr>
                   
                   
@@ -322,7 +258,7 @@ while($rows1[] = mysqli_fetch_assoc($q1));
       
       <?php
       $ELECTIONPOSITIONNUMID=1;
-        include '/home1/murvetop/includes/electionInfo.php';
+        include 'includes/electionInfo.php';
         ?>
       
   </span>
@@ -335,7 +271,7 @@ while($rows1[] = mysqli_fetch_assoc($q1));
         
         <?php
         $ELECTIONPOSITIONNUMID=1;
-        $thecall='/home1/murvetop/includes/maps/'.$state.'map'.'.php';
+        $thecall='includes/maps/'.$state.'map'.'.php';
         include $thecall;
         ?>
   </span>
@@ -396,9 +332,7 @@ while($rows2[] = mysqli_fetch_assoc($q2));
 <?php
 foreach($rows2 as $row2) {
     ?>
-       <div id="piechartssen"></div>
-    <a href="profile.php?id=<?php echo $row2['ID'] ?>"><?php echo $row2['cname'] ?></a> <?php
-    echo $row2['state_influ'] ; ?><br><?php
+<br><?php
 }
 ?>
 
@@ -408,7 +342,7 @@ foreach($rows2 as $row2) {
       
       <?php
         $ELECTIONPOSITIONNUMID=2;
-        include '/home1/murvetop/includes/electionInfo.php';
+        include 'includes/electionInfo.php';
         ?>
       
   </span>
@@ -420,7 +354,7 @@ foreach($rows2 as $row2) {
         
         <?php
         $ELECTIONPOSITIONNUMID=2;
-        $thecall='/home1/murvetop/includes/maps/'.$state.'map'.'.php';
+        $thecall='includes/maps/'.$state.'map'.'.php';
         include $thecall;
         ?>
   </span>
@@ -435,9 +369,7 @@ while($rows3[] = mysqli_fetch_assoc($q3));
 <?php
 foreach($rows3 as $row3) {
     ?>
-       <div id="piechartjsen"></div>
-    <a href="profile.php?id=<?php echo $row3['ID'] ?>"><?php echo $row3['cname'] ?></a> <?php
-    echo $row3['state_influ'] ; ?><br><?php
+<br><?php
 }
    ?>
    ️<div class="popup" onclick="OpenElectionJSen()"><span style='font-size:50px;'>🗳</span>
@@ -446,7 +378,7 @@ foreach($rows3 as $row3) {
       
       <?php
         $ELECTIONPOSITIONNUMID=3;
-        include '/home1/murvetop/includes/electionInfo.php';
+        include 'includes/electionInfo.php';
         ?>
       
   </span></div>
@@ -456,7 +388,7 @@ foreach($rows3 as $row3) {
         
         <?php
         $ELECTIONPOSITIONNUMID=3;
-        $thecall='/home1/murvetop/includes/maps/'.$state.'map'.'.php';
+        $thecall='includes/maps/'.$state.'map'.'.php';
         include $thecall;
         ?>
   </span>
@@ -539,30 +471,47 @@ echo "<script type='text/javascript'>alert('$messageu');</script>";
 
 getvalue();
 function getvalue() {
-    include '/home1/murvetop/includes/sqlcall.php';
+    include 'includes/sqlcall.php';
     $states=$_GET['state'];
-      $q1 = mysqli_query($db_link,"SELECT ID,cname,state_influ FROM user  WHERE state='$states' order by state_influ DESC ");
-while($rows[] = mysqli_fetch_assoc($q1));
-?> 
-<table class="blueTableplayers">
-     <tbody> <tr>
-         <td>
-         Name
-     </td><td>
-         State Influence
-     </td>
-     </tr>
-         <?php
-foreach($rows as $row) {
-    if ($row['ID']==0){
+$q1 = mysqli_query($db_link, "SELECT ID, cname, state_influ FROM user WHERE state='$states' ORDER BY state_influ DESC");
+
+$rows = [];
+if ($q1) {
+    while ($row = mysqli_fetch_assoc($q1)) {
+        $rows[] = $row; // Add only valid rows to the array
     }
-    else{
-    ?><tr><td>
-    <a href="profile.php?id=<?php echo $row['ID'] ?>"><?php echo $row['cname'] ?></a></td><td><?php
-    echo $row['state_influ'] ; ?></td></tr><?php
-} }
-?> </tbody> </table> <?php
 }
 ?>
-<br><br><br>
+    <table class="blueTableplayers">
+        <tbody>
+        <tr>
+            <td>Name</td>
+            <td>State Influence</td>
+        </tr>
+        <?php
+        if (!empty($rows)) {
+            foreach ($rows as $row) {
+                if (!empty($row['ID'])) { // Ensure ID is valid
+                    ?>
+                    <tr>
+                        <td>
+                            <a href="profile.php?id=<?php echo htmlspecialchars($row['ID']); ?>">
+                                <?php echo htmlspecialchars($row['cname']); ?>
+                            </a>
+                        </td>
+                        <td><?php echo htmlspecialchars($row['state_influ']); ?></td>
+                    </tr>
+                    <?php
+                }
+            }
+        } else {
+            // Display a message if no rows are returned
+            echo "<tr><td colspan='2'>No players found.</td></tr>";
+        }
+        }
+        ?>
+        </tbody>
+    </table>
+
+    <br><br><br>
 </center>

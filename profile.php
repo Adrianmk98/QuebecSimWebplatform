@@ -138,7 +138,7 @@ $position = $result->fetch_assoc();
 $position = $position['positionid'];
    if($position==1)
    {
-       echo "Governor of ";
+       echo "Premier of ";
              echo $statename;
    }
    else if($position==2 || $position==3)
@@ -193,7 +193,7 @@ $position = $position['positionid'];
        <tbody><tr>
 <td>State:</td>
 <td><img src='flags/<?php echo strtolower("$state"); ?>.png' alt="" width="20" height="20">
-    <a href="state.php?state=<?php echo $state ?>"><?php echo $state ?></a></td></tr>
+    <a href="province.php?state=<?php echo $state ?>"><?php echo $state ?></a></td></tr>
 <tr>
 <td>Party:</td><td><a href="party.php?id=<?php echo $paid ?>"><img style='vertical-align:middle;' src="https://i.imgur.com/<?php echo $partypic; ?>" alt="partylogo" width="20" height="20"><?php echo $partyname ?></a></td></tr><tr>
 <td>Money:</td><td>$<?php echo $money ?></td></tr><tr>
@@ -406,7 +406,7 @@ echo "<script type='text/javascript'>alert('$messageu');</script>";
 
 ?> <br><br><br>
    </center>
-   <button onclick="window.location.href='playerposition.php?id=<?php echo $pid;?>'">View Positions</button>
+   <button onclick="window.location.href='userPress.php?id=<?php echo $pid;?>'">View Press Posts</button>
    
    </body>
    </header>

@@ -1,46 +1,22 @@
    <meta name="viewport" content="width=device-width, initial-scale=1">
    <?php
    include 'includes/sqlcall.php';
-   $uid=$_GET['id'];
+   $uid=$_SESSION["loggedin"];
 
-$sql = "SELECT ID,cname FROM user  WHERE ID='$uid'";
+$sql = "SELECT ID,cname,cpic,state,money,actionp,state_influ,nation_influ,hoursinactive,corruption FROM user  WHERE ID='$uid'";
 $result = $db_link->query($sql)or die($db_link->error);
-$cname = $result->fetch_assoc();
-$cname = $cname['cname'];
-$pic = "SELECT cpic FROM user  WHERE ID='$uid'";
-$result = $db_link->query($pic)or die($db_link->error);
-$cpic = $result->fetch_assoc();
-$cpic = $cpic['cpic'];
-$state = "SELECT state FROM user  WHERE ID='$uid'";
-$result = $db_link->query($state)or die($db_link->error);
-$state = $result->fetch_assoc();
-$state = $state['state'];
-$cash = "SELECT money FROM user  WHERE ID='$uid'";
-$result = $db_link->query($cash)or die($db_link->error);
-$money = $result->fetch_assoc();
-$money = $money['money'];
-$action = "SELECT actionp FROM user  WHERE ID='$uid'";
-$result = $db_link->query($action)or die($db_link->error);
-$actionp = $result->fetch_assoc();
-$actionp = $actionp['actionp'];
-$istate = "SELECT state_influ FROM user  WHERE ID='$uid'";
-$result = $db_link->query($istate)or die($db_link->error);
-$state_influ = $result->fetch_assoc();
-$state_influ = $state_influ['state_influ'];
-$ination = "SELECT nation_influ FROM user  WHERE ID='$uid'";
-$result = $db_link->query($ination)or die($db_link->error);
-$nation_influ = $result->fetch_assoc();
-$nation_influ = $nation_influ['nation_influ'];
+$user = $result->fetch_assoc();
+$cname = $user['cname'];
+$cpic = $user['cpic'];
+$state = $user['state'];
+$money = $user['money'];
+$actionp = $user['actionp'];
+$state_influ = $user['state_influ'];
+$nation_influ = $user['nation_influ'];
+$hin=$user['hoursinactive'];
+$cor = $user['corruption'];
 
-$hoursin = "SELECT hoursinactive FROM user WHERE ID='$uid'";
-$result = $db_link->query($hoursin)or die($db_link->error);
-$hin = $result->fetch_assoc();
-$hin=$hin['hoursinactive'];
 
-$corrupt = "SELECT corruption FROM user  WHERE ID='$uid'";
-$result = $db_link->query($corrupt)or die($db_link->error);
-$cor = $result->fetch_assoc();
-$cor = $cor['corruption'];
 $pid=$_SESSION["loggedin"];
 $pcorrupt = "SELECT corruption FROM user  WHERE ID='$pid'";
 $result = $db_link->query($pcorrupt)or die($db_link->error);
@@ -86,6 +62,8 @@ $ammail = "SELECT COUNT(seen) FROM mail WHERE recieveid='$pid' and seen='0'";
 $result = $db_link->query($ammail)or die($db_link->error);
 $mails = $result->fetch_assoc();
 $mails = $mails['COUNT(seen)'];
+
+
    
    
    
@@ -405,7 +383,7 @@ $service = $service['ID'];
       <i class="fa fa-caret-down"></i>
     </button>
   <div class="dropdown-content">
-      <a href="state.php?state=<?php echo $pstate ?>">State</a>
+      <a href="province.php?state=<?php echo $pstate ?>">State</a>
       <a href="#" >State Statistics</a>
       <a href="#" >History of Governors</a>
       <a href="#" >State Senate History</a>

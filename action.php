@@ -22,7 +22,7 @@ $sqlhours = "UPDATE user SET hoursinactive =0 WHERE ID='$pid'";
 body {
   margin: 0;
   font-family: Arial, Helvetica, sans-serif;
-  background: lightblue url("background.jpg") no-repeat fixed center; 
+  background: lightblue url("includes/randombackground/6.jpg") no-repeat fixed center;
 }
 
 

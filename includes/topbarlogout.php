@@ -136,7 +136,7 @@ body {
 body {
   margin: 0;
   font-family: Arial, Helvetica, sans-serif;
-  background: lightblue url("background.jpg") no-repeat fixed center; 
+  background: lightblue url("randombackground/6.jpg") no-repeat fixed center;
 }
 
 .navbar {

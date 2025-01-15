@@ -5,6 +5,7 @@ if (!(isset($_SESSION['loggedin'])))//FLIP AFTER DONE
    die();
 }else
 {
+    include 'includes/topbar.php';
    include 'includes/sqlcall.php';
 $pid=$_SESSION["loggedin"];
 $sqlhours = "UPDATE user SET hoursinactive =0 WHERE ID='$pid'";
@@ -118,19 +119,19 @@ $mails = $mails['COUNT(seen)'];
 ?> 
 <body>
     <?php
-    include 'includes/topbar.php';
+
 ?>
 
 
-<div style="padding-left:16px">
+<div style="padding-left:16px" >
 </div>
    <body>
 <div class="card">
-  <img src="https://i.imgur.com/<?php echo $cpic; ?>" max-width="200" height="150">
+  <img src="https://i.imgur.com/<?php echo $cpic; ?>" max-width="200" height="150" alt="playerpic">
   <h1>
       <?php echo $cname; ?>
   </h1>
-  <p class="title">
+  <p class="title" style="">
       <?php
       $posid = "SELECT positionid FROM user  WHERE ID='$uid'";
 $result = $db_link->query($posid)or die($db_link->error);
@@ -138,7 +139,7 @@ $position = $result->fetch_assoc();
 $position = $position['positionid'];
    if($position==1)
    {
-       echo "Premier of ";
+       echo "MP from ";
              echo $statename;
    }
    else if($position==2 || $position==3)

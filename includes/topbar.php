@@ -111,8 +111,8 @@ body::after {
     left: 0;
     width: 100%;
     height: 100%;
-    background: url("background.jpg") no-repeat center center / cover;
-    opacity: 0.6; /* Set transparency of the background image */
+    background: no-repeat center center / cover;
+    opacity: 0.4; /* Set transparency of the background image */
     z-index: -1; /* Ensure the background is behind content */
 }
 
@@ -253,13 +253,12 @@ table.blueTable tr:nth-child(even) {
   display: block;
 }
 .card {
-  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
-  max-width: 450px;
-  margin: auto;
-  text-align: center;
-    background-color: #ddd;
-  font-family: arial;
-    opacity: 0.85;
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+    max-width: 450px;
+    margin: auto;
+    text-align: center;
+    background-color: rgba(221, 221, 221, 0.80); /* Semi-transparent background */
+    font-family: Arial, sans-serif;
 }
 
 .title {
@@ -380,6 +379,25 @@ textarea {
 }
 </style>
 <body>
+<script>
+    // Generate a random number between 1 and 6
+    const randomNumber = Math.floor(Math.random() * 6) + 1;
+
+    // Set the background image dynamically
+    document.body.style.setProperty(
+        '--background-image',
+        `url('includes/randombackground/${randomNumber}.jpg')`
+    );
+
+    // Apply the random background to the pseudo-element
+    const style = document.createElement('style');
+    style.textContent = `
+            body::after {
+                background-image: var(--background-image);
+            }
+        `;
+    document.head.appendChild(style);
+</script>
     <?php
 $result = $db_link->query($sql);
 $service = $result->fetch_assoc();

@@ -72,6 +72,27 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             border: 1px solid #ccc; /* Border to give the editor a clear boundary */
             padding: 10px; /* Optional padding inside the editor */
         }
+
+        /* Custom styles to remove transparency from Quill toolbar buttons */
+        .ql-toolbar {
+            background-color: #f8f9fa;  /* Light background for toolbar */
+            border: 1px solid #ccc;  /* Border around toolbar */
+            border-radius: 5px;  /* Optional rounded corners */
+        }
+        .ql-toolbar button {
+            background-color: #ffffff !important;  /* Solid white background */
+            border: 1px solid #ccc;  /* Add border to buttons */
+            border-radius: 3px;  /* Rounded corners for buttons */
+            color: #007bff;  /* Button text color */
+            padding: 5px 10px;  /* Padding inside buttons */
+        }
+        .ql-toolbar button:hover {
+            background-color: #f0f0f0;  /* Slight background change on hover */
+        }
+        .ql-toolbar .ql-active {
+            background-color: #007bff;  /* Active button background */
+            color: white;  /* Change active button text to white */
+        }
     </style>
 </head>
 <body>

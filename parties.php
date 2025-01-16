@@ -5,8 +5,8 @@ if (!(isset($_SESSION['loggedin'])))
    // die();
 }else
 {
-    include '/home1/murvetop/includes/sqlcall.php';
-    include '/home1/murvetop/includes/topbar.php';
+    include 'includes/sqlcall.php';
+    include 'includes/topbar.php';
 $pid=$_SESSION["loggedin"];
 $sqlhours = "UPDATE user SET hoursinactive =0 WHERE ID='$pid'";
         mysqli_query($db_link, $sqlhours);
@@ -18,7 +18,6 @@ $sqlhours = "UPDATE user SET hoursinactive =0 WHERE ID='$pid'";
 body {
   margin: 0;
   font-family: Arial, Helvetica, sans-serif;
-  background: lightblue url("includes/randombackground/6.jpg") no-repeat fixed center;
 }
 
 .navbar {
@@ -140,7 +139,7 @@ $sqlupdateupartynowhip = "UPDATE parties SET pwhipid=0 WHERE partyid='$upid' and
 getparty();
 
 function getparty() {
-   include '/home1/murvetop/includes/sqlcall.php';
+   include 'includes/sqlcall.php';
       $part = mysqli_query($db_link,"SELECT partyid,pname,nummem,pleaderid FROM parties ORDER BY nummem DESC");
       $partstrentot = "SELECT SUM(state_influ) FROM user";
 $resultps = $db_link->query($partstrentot)or die($db_link->error);

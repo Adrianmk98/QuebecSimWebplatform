@@ -1,8 +1,8 @@
 <?php session_start(); 
 if (!(isset($_SESSION['loggedin'])))
 {
-    //header("Location: login.html");
-   // die();
+    header("Location: login.html");
+    die();
 }else
 {
     include 'includes/sqlcall.php';
@@ -22,7 +22,6 @@ $sqlhours = "UPDATE user SET hoursinactive =0 WHERE ID='$pid'";
 body {
   margin: 0;
   font-family: Arial, Helvetica, sans-serif;
-  background: lightblue url("includes/randombackground/6.jpg") no-repeat fixed center;
 }
 
 
@@ -101,7 +100,7 @@ $nation_influ = $nation_influ['nation_influ'];
             <?php
     $uid=$_SESSION["loggedin"];
    $self = $_SERVER['PHP_SELF'];
-   $state = "SELECT state FROM user  WHERE ID='$uid'";
+   $state = "SELECT state FROM user  WHERE ID='$pid'";
 $result = $db_link->query($state)or die($db_link->error);
 $state = $result->fetch_assoc();
 $state = $state['state'];

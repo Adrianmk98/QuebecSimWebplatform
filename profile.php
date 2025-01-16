@@ -139,7 +139,7 @@ $position = $result->fetch_assoc();
 $position = $position['positionid'];
    if($position==1)
    {
-       echo "MP from ";
+       echo "MNA from ";
              echo $statename;
    }
    else if($position==2 || $position==3)

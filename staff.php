@@ -5,8 +5,8 @@ if (!isset($_SESSION['loggedin']))
     die();
 }else
 {
-include '/home2/mfp6cy5i/includes/sqlcall.php';
-    include '/home2/mfp6cy5i/includes/topbar.php';
+include 'includes/sqlcall.php';
+    include 'includes/topbar.php';
 $pid=$_SESSION["loggedin"];
 $sqlhours = "UPDATE user SET hoursinactive =0 WHERE ID='$pid'";
         mysqli_query($db_link, $sqlhours);
@@ -22,7 +22,6 @@ $sqlhours = "UPDATE user SET hoursinactive =0 WHERE ID='$pid'";
 body {
   margin: 0;
   font-family: Arial, Helvetica, sans-serif;
-  background: lightblue url("includes/randombackground/6.jpg") no-repeat fixed center;
 }
 
 .navbar {
@@ -185,10 +184,6 @@ $state_influ = $state_influ['state_influ'];
                ?>
                <br>
                <?php
-                  $db_link = mysqli_connect($host, $dbusername, $dbpassword)
-      or die("Could not connect to $host");
-    mysqli_select_db($db_link,$dbname)
-      or die("Could not select database $dbname");
     $uid=$_SESSION["loggedin"];
    $self = $_SERVER['PHP_SELF'];
    $state = "SELECT state FROM user  WHERE ID='$uid'";

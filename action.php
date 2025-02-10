@@ -125,6 +125,10 @@ $natfundmodifier=5*$fundmodifier;
 <td><button type="submit" name="press">Create Press</button></td>
 </tr>
 <tr>
+    <td> <img src="images/Press.png" alt=" Press"style="width:128px;height:128px;"> </td>
+    <td> Campaign </td>
+    <td><button type="submit" name="gcampaign">Generic Campaigning</button></td>
+</tr>
     </table>
    <br><br><br> 
 <?php
@@ -132,6 +136,9 @@ $natfundmodifier=5*$fundmodifier;
 if (isset($_POST['press'])) {
     $url = "createPress.php"; // The URL you want to open
     echo "<script>window.open('$url', '_blank');</script>";
+}
+if ((isset($_POST['gcampaign']))) {
+exit;
 }
 ?>
         </body>

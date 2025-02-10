@@ -168,6 +168,7 @@ while($prows[] = mysqli_fetch_assoc($part));
 <?php
 foreach($prows as $prow) {
     if ($prow['partyid']==0){
+        exit;
     }
     else{
     ?>

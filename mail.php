@@ -5,8 +5,8 @@ if (!(isset($_SESSION['loggedin'])))//FLIP AFTER DONE
    die();
 }else
 {
-   include '/home1/murvetop/includes/sqlcall.php';
-   include '/home1/murvetop/includes/topbar.php';
+   include 'includes/sqlcall.php';
+   include 'includes/topbar.php';
 $pid=$_SESSION["loggedin"];
 $sqlhours = "UPDATE user SET hoursinactive =0 WHERE ID='$pid'";
         mysqli_query($db_link, $sqlhours);
@@ -20,7 +20,6 @@ $sqlhours = "UPDATE user SET hoursinactive =0 WHERE ID='$pid'";
 body {
   margin: 0;
   font-family: Arial, Helvetica, sans-serif;
-  background: lightblue url("includes/randombackground/6.jpg") no-repeat fixed center;
 }
 
 .navbar {
@@ -178,11 +177,7 @@ $ch=$row['sorter'];
 $sqlseen = "UPDATE mail SET seen =1 WHERE sorter='$ch'";
         mysqli_query($db_link, $sqlseen);
         $senderid=$row['sendid'];
-$pid=$_SESSION["loggedin"];
-    $host = "localhost";
-$dbusername = "agamerpw_account";
-$dbpassword = "L7g649C";
-$dbname = "agamerpw_republica";
+
 $spic = "SELECT cpic FROM user  WHERE ID='$senderid'";
 $sendp = $db_link->query($spic)or die($db_link->error);
 $sendpic = $sendp->fetch_assoc();
@@ -193,8 +188,7 @@ $sendname = $sendn->fetch_assoc();
 $sendname = $sendname['cname'];      
         ?>
         <img src="https://i.imgur.com/<?php echo $sendpic; ?>" max-width="50" height="50"> <br>
-        <a href="profile.php?id=<?php echo $row['sendid'] ?>"><?php echo $sendname ?></a> <?php
-    echo $row['state_influ'] ; ?><br>
+        <a href="profile.php?id=<?php echo $row['sendid'] ?>"><?php echo $sendname ?></a><br>
     </td>
     
                <td>

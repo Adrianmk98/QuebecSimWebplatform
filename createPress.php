@@ -1,8 +1,8 @@
 <?php session_start();
 if (!(isset($_SESSION['loggedin'])))
 {
-    //header("Location: login.html");
-    // die();
+    header("Location: login.html");
+    die();
 }else
 {
     include 'includes/sqlcall.php';
@@ -21,7 +21,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     // Prepare and execute the SQL statement, including createdAt for the timestamp
     $stmt = $db_link->prepare("INSERT INTO `press` (`pressFlairID`, `pressTitle`,`AuthorID`, `pressContent`, `createdAt`) VALUES (?, ?, ?, ?)");
-    $stmt->bind_param("isss", $pressFlairID, $pressTitle,$pid, $pressContent, $createdAt);
+    $stmt->bind_param("issss", $pressFlairID, $pressTitle,$pid, $pressContent, $createdAt);
 
     if ($stmt->execute()) {
         echo "<p>Press entry created successfully!</p>";
@@ -33,8 +33,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 }
 ?>
 
-<!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -45,7 +44,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     <style>
         body {
             font-family: Arial, sans-serif;
-            margin: 20px;
         }
         form {
             max-width: 600px;

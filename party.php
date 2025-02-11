@@ -12,7 +12,13 @@ $sqlhours = "UPDATE user SET hoursinactive =0 WHERE ID='$pid'";
         mysqli_query($db_link, $sqlhours);
 }?>
 
-
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="tableStyle.css">
+</head>
 <?php
 
 $partyid=$_GET['id'];
@@ -53,22 +59,10 @@ $partypic = $partypic['ppic'];
     <button type="submit" name="pd">Party Discussion</button>
 </form>
                   </center>      
-   <table class="blueTablead">
-        <tbody>
-            
-           <tr>
-               <td>
-                   Party Leader
-               </td>
-               <td>
-                   Chief Whip
-               </td>
-               <td>
-                   Treasurer
-               </td>
-           </tr>
-           <tr>
-               
+   <table>
+       <tr><th>Party Leader</th><th>Chief Whip</th><th>Treasurer</th></tr>
+
+               <tr>
                <td>
                  <?php
                  
@@ -105,16 +99,16 @@ echo $cname;
                    $whip = "SELECT pwhipid FROM parties WHERE partyid='$pid'";
 $result = $db_link->query($whip)or die($db_link->error);
 $whipe = $result->fetch_assoc();
-$whipe = $whipe['pwhipid'];
-                 $picw = "SELECT cpic FROM user  WHERE ID='$whipe'";
+$whipe = $whipe['pwhipid']??0;
+                 $picw = "SELECT cpic FROM user WHERE ID='$whipe'";
 $result = $db_link->query($picw)or die($db_link->error);
 $cpicw = $result->fetch_assoc();
-$cpicw = $cpicw['cpic'];
+$cpicw = $cpicw['cpic']??0;
 
-$sqlw = "SELECT cname FROM user  WHERE ID='$whipe'";
+$sqlw = "SELECT cname FROM user WHERE ID='$whipe'";
 $result = $db_link->query($sqlw)or die($db_link->error);
 $cnamew = $result->fetch_assoc();
-$cnamew = $cnamew['cname'];
+$cnamew = $cnamew['cname']??0;
 
 ?>
 <img src="https://i.imgur.com/<?php echo $cpicw; ?>" alt="Character" max-width="100" height="50"><br>
@@ -128,16 +122,16 @@ echo $cnamew;
                    $treasure = "SELECT ptreasurerid FROM parties WHERE partyid='$pid'";
 $result = $db_link->query($treasure)or die($db_link->error);
 $tre = $result->fetch_assoc();
-$tre = $tre['ptreasurerid'];
+$tre = $tre['ptreasurerid']??0;
                  $pict = "SELECT cpic FROM user  WHERE ID='$tre'";
 $result = $db_link->query($pict)or die($db_link->error);
 $cpict = $result->fetch_assoc();
-$cpict = $cpict['cpic'];
+$cpict = $cpict['cpic']??0;
 
 $sqlt = "SELECT cname FROM user  WHERE ID='$tre'";
 $result = $db_link->query($sqlt)or die($db_link->error);
 $cnamet = $result->fetch_assoc();
-$cnamet = $cnamet['cname'];
+$cnamet = $cnamet['cname']??0;
 
 ?>
 <img src="https://i.imgur.com/<?php echo $cpict; ?>" alt="Character" max-width="100" height="50"><br>
@@ -151,12 +145,16 @@ echo $cnamet;
            
             </tbody>
             </table>
-            <table class="blueTablead">
+    <br>
+    <?
+    //start of tax table and where party treasury is located
+    ?>
+
+            <table>
+                <tr><th>Party Tax</th><th>Party Treasury</th></tr>
                 <tbody>
                     <tr>
-               <td>
-                   Party Tax
-               </td>
+
                <td>
                    <?php
                    $pid=$_GET['id'];
@@ -168,11 +166,7 @@ echo "$partax%";
                    
                    ?>
                </td>
-           </tr>
-           <tr>
-               <td>
-                   Party Treasury
-               </td>
+
                <td>
                    <?php
                    $pid=$_GET['id'];
@@ -196,23 +190,22 @@ $pid=$_GET['id'];
 $patreid = "SELECT ptreasurerid FROM parties WHERE partyid='$pid'";
 $result = $db_link->query($patreid)or die($db_link->error);
 $partrerid = $result->fetch_assoc();
-$partrerid = $partrerid['ptreasurerid'];
+$partrerid = $partrerid['ptreasurerid']??0;
 
 $tresid = "SELECT ID FROM user WHERE ID='$partrerid'";
 $result = $db_link->query($tresid)or die($db_link->error);
 $trid = $result->fetch_assoc();
-$trid = $trid['ID'];
+$trid = $trid['ID']??0;
 
+//If the player is the treasurer this will be displayed. The treasurer is only able to take money out of the party and cannot do anything else
 if($uid==$trid)
 {
     ?>
-<table class="blueTableleader">
+<table>
+    <tr><th>Withdraw from Treasury</th></tr>
                 <tbody>
                    
                     <tr>
-               <td>
-                   Withdraw from Treasury
-               </td>
                <td>
                    <form action="<?php echo $self ?>?id=<?php echo $pid ?>" method="POST">
                    <input type="text" name="rtreasuryt" style="width: 50px">
@@ -224,13 +217,13 @@ if($uid==$trid)
                
                <?php
 }
-
+//Person with most votes is the party leader and will have access to more different abilities and can influence the party in more ways
 if($uid==$mvote)
 {
     ?>
     Party Leader Actions
     <form action="<?php echo $self ?>?id=<?php echo $pid ?>" method="POST">
-    <table class="blueTableleader">
+    <table>
                 <tbody>
                    
                     <tr>
@@ -281,7 +274,7 @@ $pid=$_GET['id'];
       
 while($rows[] = mysqli_fetch_assoc($q1));
 ?>
-<table class="blueTablead">
+<table>
         <tbody>
             <tr>
                
@@ -308,7 +301,7 @@ foreach($rows as $row) {
     if ($row['ID']==0){
     }
     else{
-    
+
     ?>
     <tr>
                <td>
@@ -319,7 +312,7 @@ foreach($rows as $row) {
         $vid=$row['ID'];
         ?>
         <button type="submit" name="vote[<?php echo $row['ID'] ?>]" value="vote">Vote</button>
-        
+
     </td>
     <td>
         <?php
@@ -349,7 +342,7 @@ $partrerr = $partrerr['cname'];
 
 echo $partrerr;
         ?>
-        
+
     </td>
     </tr><?php
 }}
@@ -488,4 +481,4 @@ echo "<script type='text/javascript'>alert('$messagel');</script>";
 }
 ?>
 
-</center>
+</html>

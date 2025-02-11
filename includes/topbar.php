@@ -171,47 +171,7 @@ body::after {
   padding-left: 20px;
   padding-right: 20px;
 }
-table.blueTable {
-  border: 1px solid #1C6EA4;
-  background-color: #EEEEEE;
-  width: 50%;
-  text-align: center;
-  border-collapse: collapse;
-}
-table.blueTable {
-  border: 1px solid #1C6EA4;
-  background-color: #EEEEEE;
-  width: 75%;
-  text-align: center;
-  border-collapse: collapse;
-}
-table.blueTablemap {
-  width: 50%;
-  text-align: center;
-  border-collapse: collapse;
-  position: absolute;
-  top: 80%;
-    left: 50%;
-    margin-right: -50%;
-    transform: translate(-50%, -50%)
-}
-table.blueTablec {
-  border: 1px solid #1C6EA4;
-  background-color: #EEEEEE;
-  width: 30%;
-  text-align: center;
-  border-collapse: collapse;
-}
-table.blueTable td, table.blueTable th {
-  border: 1px solid #AAAAAA;
-  padding: 3px 2px;
-}
-table.blueTable tbody td {
-  font-size: 13px;
-}
-table.blueTable tr:nth-child(even) {
-  background: #D0E4F5;
-}
+
 .dropdown {
   float: left;
   overflow: hidden;

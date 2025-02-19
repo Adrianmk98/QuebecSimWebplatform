@@ -1,6 +1,6 @@
  <?php
 
-include '/home1/murvetop/includes/sqlcall.php';
+include 'inclues/sqlcall.php';
 $candidates = array();
 $candidatevalues= array();
 $winner=array();

@@ -420,7 +420,7 @@ $service = $service['ID'];
   <div class="dropdown-content">
       <a href="province.php?state=<?php echo $pstate ?>">State</a>
       <a href="#" >State Statistics</a>
-      <a href="#" >History of Governors</a>
+      <a href="regionHistory.php" >Region History</a>
       <a href="#" >State Senate History</a>
       
       
@@ -432,7 +432,7 @@ $service = $service['ID'];
       <i class="fa fa-caret-down"></i>
     </button>
   <div class="dropdown-content">
-      <a href="Executive.php" >Executive</a>
+      <a href="Executive.php" >Cabinet</a>
       <a href="#" >Presidential Election</a>
       <a href="#" >Presidential Primary</a>
       <a href="#" >Presidential History</a>

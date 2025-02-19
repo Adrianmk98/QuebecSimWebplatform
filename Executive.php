@@ -18,9 +18,19 @@ if (!(isset($_SESSION['loggedin'])))//FLIP AFTER DONE
     <link rel="stylesheet" href="executiveStyle.css">
 </header>
 <br><br>
+<h1>Prime Minister</h1>
+<div class="card">
+    <img src="https://i.imgur.com/<?php echo $cpic; ?>" max-width="200" height="150" alt="playerpic">
+    <h1>
+        <?php echo $cname; ?>
+    </h1>
+
+</div><br><br>
 <table>
-    <tr><th>Position</th><th>Player</th></tr>
+    <tr><th>HM Government Cabinet Positions</th><th>Name</th><th>Party</th></tr>
     <tr>
+        <td>
+        </td>
         <td>
         </td>
         <td>

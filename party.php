@@ -18,6 +18,8 @@ $sqlhours = "UPDATE user SET hoursinactive =0 WHERE ID='$pid'";
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <link rel="stylesheet" href="tableStyle.css">
+<link rel="stylesheet" href="headerStyle.css">
+    <link rel="stylesheet" href="partyStyle.css">
 </head>
 <?php
 
@@ -52,11 +54,11 @@ $partypic = $partypic['ppic'];
    $self = $_SERVER['PHP_SELF'];
 ?><center>
               <form action="<?php echo $self ?>?id=<?php echo $pid ?>" method="POST">
-                  <button type="submit" name="jp">Join Party</button><br><br>
+                  <button class='partyButton' type="submit" name="jp">Join Party</button><br><br>
                   </form>
                   
                   <form action="partydiscussion.php" method="POST">
-    <button type="submit" name="pd">Party Discussion</button>
+    <button class='partyButton' type="submit" name="pd">Party Discussion</button>
 </form>
                   </center>      
    <table>
@@ -209,7 +211,7 @@ if($uid==$trid)
                <td>
                    <form action="<?php echo $self ?>?id=<?php echo $pid ?>" method="POST">
                    <input type="text" name="rtreasuryt" style="width: 50px">
-                    <button type="submit" name="rtreasury">Submit</button>
+                    <button class='partyButton' type="submit" name="rtreasury">Submit</button>
                     </form>
                </td>
                </tr>
@@ -221,7 +223,7 @@ if($uid==$trid)
 if($uid==$mvote)
 {
     ?>
-    Party Leader Actions
+    <h2>Party Leader Actions</h2>
     <form action="<?php echo $self ?>?id=<?php echo $pid ?>" method="POST">
     <table>
                 <tbody>
@@ -274,6 +276,7 @@ $pid=$_GET['id'];
       
 while($rows[] = mysqli_fetch_assoc($q1));
 ?>
+<h2>Members</h2>
 <table>
         <tbody>
             <tr>
@@ -480,5 +483,5 @@ echo "<script type='text/javascript'>alert('$messagel');</script>";
 
 }
 ?>
-
+<br><br>
 </html>

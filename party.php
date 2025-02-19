@@ -300,57 +300,62 @@ while($rows[] = mysqli_fetch_assoc($q1));
            </tr>
             <form action="<?php echo $self ?>?id=<?php echo $pid ?>" method="POST">
 <?php
-foreach($rows as $row) {
-    if ($row['ID']==0){
+foreach ($rows as $row) {
+    // Validate row existence before accessing array keys
+    if (!isset($row['ID']) || is_null($row['ID'])) {
+        continue;
     }
-    else{
 
+    // Skip empty rows or those with an ID of 0
+    if ($row['ID'] == 0) {
+        continue;
+    }
     ?>
     <tr>
-               <td>
-    <a href="profile.php?id=<?php echo $row['ID'] ?>"> <?php echo $row['cname'] ?></a> </td><td><?php
-    echo $row['state'] ; ?></td>
-    <td>
-        <?php
-        $vid=$row['ID'];
-        ?>
-        <button type="submit" name="vote[<?php echo $row['ID'] ?>]" value="vote">Vote</button>
+        <td>
+            <a href="profile.php?id=<?php echo htmlspecialchars($row['ID']); ?>">
+                <?php echo htmlspecialchars($row['cname'] ?? 'Unknown'); ?>
+            </a>
+        </td>
+        <td><?php echo htmlspecialchars($row['state'] ?? 'Unknown'); ?></td>
+        <td>
+            <button type="submit" name="vote[<?php echo htmlspecialchars($row['ID']); ?>]" value="vote">Vote</button>
+        </td>
+        <td>
+            <?php
+            $partvote = $row['ID'];
+            $plead = "SELECT COUNT(pleadervoteid) AS count FROM user WHERE partyid='$pid' AND pleadervoteid='$partvote'";
+            $result = $db_link->query($plead);
+            $partre = ($result && $result->num_rows > 0) ? $result->fetch_assoc()['count'] : 0;
+            echo $partre;
 
-    </td>
-    <td>
-        <?php
-        $partvote=$row['ID'];
-        $plead="SELECT COUNT(pleadervoteid) FROM user WHERE partyid='$pid' AND pleadervoteid='$partvote'";
-$result = $db_link->query($plead)or die($db_link->error);
-$partre = $result->fetch_assoc();
-$partre = $partre['COUNT(pleadervoteid)'];
-echo "$partre";
-$sqlupdatevotecount = "UPDATE user SET leadervotes='$partre' WHERE partyid='$pid' AND ID='$partvote'";
-        mysqli_query($db_link, $sqlupdatevotecount);
+            $sqlupdatevotecount = "UPDATE user SET leadervotes='$partre' WHERE partyid='$pid' AND ID='$partvote'";
+            mysqli_query($db_link, $sqlupdatevotecount);
+            ?>
+        </td>
+        <td>
+            <?php
+            $plead = "SELECT pleadervoteid FROM user WHERE partyid='$pid' AND ID='$partvote'";
+            $result = $db_link->query($plead);
+            $partrer = ($result && $result->num_rows > 0) ? $result->fetch_assoc()['pleadervoteid'] : null;
 
+            if ($partrer !== null) {
+                $plead = "SELECT cname FROM user WHERE partyid='$pid' AND ID='$partrer'";
+                $result = $db_link->query($plead);
+                $partrerr = ($result && $result->num_rows > 0) ? $result->fetch_assoc()['cname'] : 'Unknown';
+            } else {
+                $partrerr = 'Unknown';
+            }
+
+            echo htmlspecialchars($partrerr);
+            ?>
+        </td>
+    </tr>
+    <?php
+}
 ?>
-    </td>
-    <td>
-        <?php
-        $partvote=$row['ID'];
-        $plead="SELECT pleadervoteid FROM user WHERE partyid='$pid' AND ID='$partvote'";
-$result = $db_link->query($plead)or die($db_link->error);
-$partrer = $result->fetch_assoc();
-$partrer = $partrer['pleadervoteid'];
-
-$plead="SELECT cname FROM user WHERE partyid='$pid' AND ID='$partrer'";
-$result = $db_link->query($plead)or die($db_link->error);
-$partrerr = $result->fetch_assoc();
-$partrerr = $partrerr['cname'];
-
-echo $partrerr;
-        ?>
-
-    </td>
-    </tr><?php
-}}
-?>
-</form>
+</table>
+</form><br><br>
 <?php
 
 if ((isset($_POST['awhip'])))

@@ -18,7 +18,7 @@ if (!(isset($_SESSION['loggedin'])))//FLIP AFTER DONE
     <link rel="stylesheet" href="executiveStyle.css">
 </header>
 <br><br>
-<h1>Prime Minister</h1>
+<h1>Premier</h1>
 <div class="card">
     <img src="https://i.imgur.com/<?php echo $cpic; ?>" max-width="200" height="150" alt="playerpic">
     <h1>

@@ -67,6 +67,9 @@ $cpics2 = $data[3]['cpic'];
 
 ?>
    <meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="headerStyle.css">
+<link rel="stylesheet" href="provinceStyle.css">
+<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
 <style>
 
 .text-block {
@@ -130,6 +133,50 @@ table.blueTableplayers tbody td {
 table.blueTableplayers tr:nth-child(even) {
   background: #D0E4F5;
 }
+.modal {
+    display: none; /* Hidden by default */
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    justify-content: center;
+    align-items: center;
+}
+
+.modal-content {
+    background-color: white;
+    padding: 20px;
+    border-radius: 8px;
+    width: 350px;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* Centers horizontally */
+    justify-content: center; /* Centers vertically */
+}
+
+#influencechart {
+    width: 300px;
+    height: 300px; /* Make it a square for better alignment */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+
+
+.close-btn {
+    cursor: pointer;
+    background: red;
+    color: white;
+    border: none;
+    padding: 5px 10px;
+    margin-top: 10px;
+    border-radius: 5px;
+}
 </style>
 <?php
 
@@ -144,7 +191,7 @@ $statename = $statename['statename'];
 echo $statename;
 
 ?> <br>
-<img src='flags/<?php echo strtolower("$state"); ?>.png' alt="" width="150" height="100"><br>
+<img src='includes/flags/<?php echo strtolower("$state"); ?>.jpg' alt="" width="150" height="120"><br>
 <?php
    
    $self = $_SERVER['PHP_SELF'];
@@ -158,29 +205,105 @@ $pid = $pid['partyid'];
      <tbody><tr><td>
               <form action="<?php echo $self ?>?state=<?php echo $state ?>" method="POST">
                   </td><td>
-                  <button type="submit" width="50%" name="cstate">Relocate</button></td>
+                  <button class="provinceButton" type="submit" width="50%" name="cstate">Relocate</button></td>
                   <?php 
                   if($pid != 0)
                   {
                       ?>
-                  <td><button type="submit" width="50%" name="istate">Increase Party Influence</button></td>
+                  <td><button class="provinceButton" type="submit" width="50%" name="istate">Increase Party Influence</button></td>
                   <?php } ?>
                   </form></tr></tbody></table>
-                  
+
+    <button class="provinceButton" onclick="openPIModal()">Regional Party Influence</button>
+
+    <div id="chartModal" class="modal">
+        <div class="modal-content">
+            <h3>Party Influence</h3>
+            <div id="influencechart" style="width: 300px; height: 200px;"></div>
+            <button class="close-btn" onclick="closePIModal()">Close</button>
+        </div>
+    </div>
+
                   <form action="<?php echo $self ?>?state=<?php echo $state ?>" method="POST">
-                     
 
 
-<div id="influencechart" style="width: 300px; height: 200px;"></div>
+
+                      <script type="text/javascript">
+                          google.charts.load('current', {'packages':['corechart']});
+                          google.charts.setOnLoadCallback(drawChart);
+
+                          function drawChart() {
+                              <?php
+                              $state = $_GET['state'];
+                              $statelower = strtolower($state);
+                              $statelower = 'i' . $statelower;
+                              $paridnames = "SELECT pname, $statelower, partycolour FROM parties WHERE $statelower > 0";
+                              $result = $db_link->query($paridnames) or die($db_link->error);
+                              ?>
+
+                              var data = google.visualization.arrayToDataTable([
+                                  ['Party Name', 'Party Influence'],
+                                  <?php
+                                  while($row = mysqli_fetch_assoc($result)) {
+                                      echo "['" . $row['pname'] . "', " . $row[$statelower] . "],";
+                                  }
+                                  ?>
+                              ]);
+
+                              var options = {
+                                  sliceVisibilityThreshold: 0.1,
+                                  legend: 'none',
+                                  backgroundColor: 'none',
+                                  pieSliceText: 'percentage',  // Ensures percentage appears inside
+                                  pieSliceTextStyle: {
+                                      fontSize: 14,   // Adjust font size for better centering
+                                      color: 'white', // Makes text readable
+                                      bold: true
+                                  },
+                                  chartArea: {
+                                      left: '15%',   // Adjust these values if needed
+                                      top: '10%',
+                                      width: '70%',
+                                      height: '80%'
+                                  },
+                                  slices: {
+                                      <?php
+                                      $count = 0;
+                                      $paridnames = "SELECT pname,$statelower,partycolour FROM parties WHERE $statelower>0";
+                                      $result = $db_link->query($paridnames)or die($db_link->error);
+                                      while ($row = mysqli_fetch_assoc($result)) {
+                                          echo $count . " : { color : '" . $row['partycolour'] . "'},";
+                                          $count++;
+                                      }
+                                      ?>
+                                  }
+                              };
+
+
+
+                              var chart = new google.visualization.PieChart(document.getElementById('influencechart'));
+                              chart.draw(data, options);
+                          }
+
+                          // Open the Modal
+                          function openPIModal() {
+                              document.getElementById('chartModal').style.display = 'flex';
+                          }
+
+                          // Close the Modal
+                          function closePIModal() {
+                              document.getElementById('chartModal').style.display = 'none';
+                          }
+                      </script>
 
                      <table class="bluesTable">
      <tbody> <tr><td>
-                  <button type="submit" name="gov">Governor Election</button></td>
-                  <td><button type="submit" name="ssen">Senior Senator Election</button></td>
-                  <td><button type="submit" name="jsen">Junior Senator Election</button></td></tr>
+                  <button class="provinceButton" type="submit" name="gov">Mayor Election</button></td>
+         <td><button class="provinceButton" type="submit" name="ssen">City Counsel Election</button></td>
+                  <td><button class="provinceButton" type="submit" name="jsen">MoP Parliament</button></td></tr>
                   </form>
                   <tr><td>
-                      Governor <br>
+                      Mayor <br>
                       <img src="https://i.imgur.com/<?php echo $cpicgov; ?>" alt="Character" max-width="100" height="64"><br>
                       <?php 
                       
@@ -191,16 +314,11 @@ $pid = $pid['partyid'];
                         ?>
                       <a href="profile.php?id=<?php echo $idGov ?>"><?php echo $cnamegov ?></a>
                       <?php
-                      //echo $cnamegov;
-                      
-                      
-                      
-                      
                       ?> <br> <?php
                       ?>
                   </td>
                   <td>
-                      Senator <br>
+                      Counselor <br>
                       <img src="https://i.imgur.com/<?php echo $cpics1; ?>" alt="Character" max-width="100" height="64"><br>
                       <a href="profile.php?id=<?php echo $idSen1 ?>"><?php echo $cnames1 ?></a>
                       <?php
@@ -209,7 +327,7 @@ $pid = $pid['partyid'];
                       ?> <br>
                   </td>
                   <td>
-                      Senator <br>
+                      MPP <br>
                       <img src="https://i.imgur.com/<?php echo $cpics2; ?>" alt="Character" max-width="100" height="64"><br>
                       <a href="profile.php?id=<?php echo $idSen2 ?>"><?php echo $cnames2 ?></a>
                       <?php

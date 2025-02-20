@@ -28,7 +28,7 @@ $mstate = "SELECT state FROM user  WHERE ID='$pid'";
 $result = $db_link->query($mstate)or die($db_link->error);
 $mystate = $result->fetch_assoc();
 $state = $mystate['state'];
-
+$loggedinState=$mystate['state'];
 $state=$_GET['state'];
 
 // Array to store data by position
@@ -119,7 +119,7 @@ table.electionTable {
 table.blueTableplayers {
   border: 1px solid #1C6EA4;
   background-color: #EEEEEE;
-  width: 30%;
+  width: 50%;
   text-align: center;
   border-collapse: collapse;
 }
@@ -177,6 +177,33 @@ table.blueTableplayers tr:nth-child(even) {
     margin-top: 10px;
     border-radius: 5px;
 }
+
+table.blue {
+    background-color: #fff; /* White background for the table */
+    margin: 0 auto; /* Centers the table horizontally */
+    border-collapse: collapse; /* Ensures borders between table cells collapse into a single border */
+    width: 30%; /* Adjust the width to control the table's size */
+}
+
+/* Optional: styling for table headers */
+th.blue {
+    background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent background for table headers */
+    color: white; /* Text color */
+    padding: 10px; /* Adds space inside headers */
+}
+
+/* Optional: styling for table data */
+td.blue {
+    padding: 10px; /* Adds padding inside table cells */
+    text-align: center; /* Centers the text inside table cells */
+    border: 1px solid #ddd; /* Adds a light border around each cell */
+}
+tr.blue:hover {
+    background-color: rgba(0, 0, 0, 0.1); /* Light background on row hover */
+}
+
+
+
 </style>
 <?php
 
@@ -188,7 +215,8 @@ $statename = "SELECT statename FROM states WHERE stateid='$state'";
 $result = $db_link->query($statename)or die($db_link->error);
 $statename = $result->fetch_assoc();
 $statename = $statename['statename'];
-echo $statename;
+
+echo "<h2>".$statename."</h2>";
 
 ?> <br>
 <img src='includes/flags/<?php echo strtolower("$state"); ?>.jpg' alt="" width="150" height="120"><br>
@@ -204,23 +232,106 @@ $pid = $pid['partyid'];
 <table class="bluesTable">
      <tbody><tr><td>
               <form action="<?php echo $self ?>?state=<?php echo $state ?>" method="POST">
-                  </td><td>
+                  </td>
+         <?php
+         if($loggedinState!=$state)
+             {
+                 ?>
+
+             <td>
                   <button class="provinceButton" type="submit" width="50%" name="cstate">Relocate</button></td>
-                  <?php 
-                  if($pid != 0)
-                  {
-                      ?>
-                  <td><button class="provinceButton" type="submit" width="50%" name="istate">Increase Party Influence</button></td>
-                  <?php } ?>
+<?php } ?>
                   </form></tr></tbody></table>
 
     <button class="provinceButton" onclick="openPIModal()">Regional Party Influence</button>
-
+    <button class="provinceButton" onclick="openElectionModal()">Enter Election</button>
     <div id="chartModal" class="modal">
         <div class="modal-content">
             <h3>Party Influence</h3>
+            <?php
+            if($pid != 0)
+            {
+                ?>
+                <button class="provinceButton" type="submit" width="50%" name="istate">Increase Party Influence</button>
+                <?php
+
+                if ((isset($_POST['istate'])))
+                {
+                    $state=$_GET['state'];
+                    $uid=$_SESSION["loggedin"];
+                    $sql = "SELECT money FROM user  WHERE ID='$uid'";
+                    $result = $db_link->query($sql)or die($db_link->error);
+                    $money = $result->fetch_assoc();
+                    $money = $money['money'];
+                    $sql = "SELECT actionp FROM user  WHERE ID='$uid'";
+                    $result = $db_link->query($sql)or die($db_link->error);
+                    $actionp = $result->fetch_assoc();
+                    $actionp = $actionp['actionp'];
+                    $nstate = "SELECT nation_influ FROM user  WHERE ID='$uid'";
+                    $result = $db_link->query($nstate)or die($db_link->error);
+                    $nat_influ = $result->fetch_assoc();
+                    $nat_influ = $nat_influ['nation_influ'];
+
+                    $parid = "SELECT partyid FROM user  WHERE ID='$uid'";
+                    $result = $db_link->query($parid)or die($db_link->error);
+                    $upartyid = $result->fetch_assoc();
+                    $upartyid = $upartyid['partyid'];
+                    $pstate=$_GET['state'];
+                    $pgrabber='i'.$pstate;
+                    $pistate=strtolower($pgrabber);
+                    $stpopid = "SELECT population FROM statedemo  WHERE State='$pstate'";
+                    $result = $db_link->query($stpopid)or die($db_link->error);
+                    $spopid = $result->fetch_assoc();
+                    $spopid = $spopid['population'];
+                    $influincreasemodifier=5000+$spopid*($state_influ/1000);
+                    if($actionp >= 5 && $nat_influ >=5 && $money >=10000)
+                    {
+                        $sqlupdatec = "UPDATE user SET money =money-10000 WHERE ID='$uid'";
+                        mysqli_query($db_link, $sqlupdatec);
+                        $sqlupdatep = "UPDATE user SET actionp =actionp-5 WHERE ID='$uid'";
+                        mysqli_query($db_link, $sqlupdatep);
+                        $sqlupdateinflu = "UPDATE parties SET $pistate=$pistate+1 WHERE partyid='$upartyid'";
+                        mysqli_query($db_link, $sqlupdateinflu);
+                        $messageu = "Increased Party Power in state ";
+                        echo "<script type='text/javascript'>alert('$messageu');</script>";
+                    }elseif($actionp >=5 && $stateinflu <5 && money >=10000)
+                    {
+                        $messageu = "Not enough Influence ";
+                        echo "<script type='text/javascript'>alert('$messageu');</script>";
+                    }elseif($actionp < 5 && $stateinflu >= 5 && money >=10000)
+                    {
+                        $messageu = "Not enough Actions ";
+                        echo "<script type='text/javascript'>alert('$messageu');</script>";
+                    }
+                    elseif($actionp >= 5 && $nat_influ >=5 && money < 10000)
+                    {
+                        $messageu = "Not enough Money";
+                        echo "<script type='text/javascript'>alert('$messageu');</script>";
+                    }
+                    else
+                    {
+                        $messageu = "Not enough Actions and Local Influence";
+                        echo "<script type='text/javascript'>alert('$messageu');</script>";
+                    }
+                }
+
+                ?>
+                <td></td>
+            <?php } ?>
+
             <div id="influencechart" style="width: 300px; height: 200px;"></div>
             <button class="close-btn" onclick="closePIModal()">Close</button>
+        </div>
+    </div>
+    <div id="ElectionModal" class="modal">
+        <div class="modal-content">
+            <h3>Party Influence</h3>
+            <table class="bluesTable">
+                <tbody> <tr>
+                    <td><button class="provinceButton" type="submit" name="jsen">MoP Parliament</button></td></tr>
+                </tbody></table>
+
+            <button class="close-btn" onclick="closeElectionModal()">Close</button>
         </div>
     </div>
 
@@ -294,50 +405,43 @@ $pid = $pid['partyid'];
                           function closePIModal() {
                               document.getElementById('chartModal').style.display = 'none';
                           }
-                      </script>
+                          // Open the Modal
+                          function openElectionModal() {
+                              document.getElementById('ElectionModal').style.display = 'flex';
+                          }
 
-                     <table class="bluesTable">
-     <tbody> <tr><td>
-                  <button class="provinceButton" type="submit" name="gov">Mayor Election</button></td>
-         <td><button class="provinceButton" type="submit" name="ssen">City Counsel Election</button></td>
-                  <td><button class="provinceButton" type="submit" name="jsen">MoP Parliament</button></td></tr>
+                          // Close the Modal
+                          function closeElectionModal() {
+                              document.getElementById('ElectionModal').style.display = 'none';
+                          }
+                      </script>
                   </form>
-                  <tr><td>
-                      Mayor <br>
-                      <img src="https://i.imgur.com/<?php echo $cpicgov; ?>" alt="Character" max-width="100" height="64"><br>
-                      <?php 
-                      
-                        $govid = "SELECT ID FROM user  WHERE cname='$cnamegov'";
-                        $result = $db_link->query($govid)or die($db_link->error);
-                        $idGov = $result->fetch_assoc();
-                        $idGov = $idGov['ID'];
-                        ?>
-                      <a href="profile.php?id=<?php echo $idGov ?>"><?php echo $cnamegov ?></a>
-                      <?php
-                      ?> <br> <?php
-                      ?>
-                  </td>
-                  <td>
-                      Counselor <br>
-                      <img src="https://i.imgur.com/<?php echo $cpics1; ?>" alt="Character" max-width="100" height="64"><br>
-                      <a href="profile.php?id=<?php echo $idSen1 ?>"><?php echo $cnames1 ?></a>
-                      <?php
-                      
-                      
-                      ?> <br>
-                  </td>
-                  <td>
-                      MPP <br>
-                      <img src="https://i.imgur.com/<?php echo $cpics2; ?>" alt="Character" max-width="100" height="64"><br>
-                      <a href="profile.php?id=<?php echo $idSen2 ?>"><?php echo $cnames2 ?></a>
-                      <?php
-                    
-                    ?> <br>
-                  </td></tr>
-                  
-                  
-                  
+    <h3>Member of Provincial Parliament</h3>
+    <table class="blue">
+        <tr class="blue"><td class="blue">
+                <br>
+                <img src="https://i.imgur.com/<?php echo $cpicgov; ?>" alt="Character" max-width="100" height="64"><br>
+                <?php
+
+                $govid = "SELECT ID FROM user  WHERE cname='$cnamegov'";
+                $result = $db_link->query($govid)or die($db_link->error);
+                $idGov = $result->fetch_assoc();
+                $idGov = $idGov['ID']??0;
+                ?>
+                <a href="profile.php?id=<?php echo $idGov ?>"><?php echo $cnamegov ?></a>
+                <?php
+                ?> <br> <?php
+                ?>
+            </td></tr></table><br><br>
+
                   <?php
+                  if ((isset($_POST['cstate'])))
+                  {
+                      $state=$_GET['state'];
+                      $uid=$_SESSION["loggedin"];
+                      $sqlupdatec = "UPDATE user SET state ='$state' WHERE ID='$uid'";
+                      mysqli_query($db_link, $sqlupdatec);
+                  }
 if ((isset($_POST['gov'])))
    {
     $state=$_GET['state'];
@@ -363,26 +467,19 @@ $sqlupdateelection = "UPDATE user SET inelection =3 WHERE ID='$uid'";
         
    }
    $q1 = mysqli_query($db_link,"SELECT ID,cname,state_influ FROM user WHERE state='$state' and inelection=1  order by state_influ DESC");
-      
+      ?>
+        <?php
 while($rows1[] = mysqli_fetch_assoc($q1));
 ?>
-<tr><td>
-    
-    
-️
+
     ️<div class="popup" onclick="OpenElectionGov()"><span style='font-size:50px;'>🗳</span>
   <span class="popuptext" style="background: transparent;" id="OpenElectionGov">
-      
-      
       <?php
       $ELECTIONPOSITIONNUMID=1;
         include 'includes/electionInfo.php';
         ?>
-      
   </span>
   </div>
-<br>
-
 <div class="popup" onclick="myFunctionemail()"><span style='font-size:50px;'>🌎</span>
   <span class="popuptext" style="background: transparent;" id="myPopupemail">
       
@@ -394,196 +491,10 @@ while($rows1[] = mysqli_fetch_assoc($q1));
         ?>
   </span>
 </div>
-<script>
-// When the user clicks on div, open the popup
-function myFunctionemail() {
-
-  var popup = document.getElementById("myPopupemail");
-  popup.classList.toggle("show");
-  
-}
-function myFunctionemail2() {
-  var popup = document.getElementById("myPopupemail2");
-  popup.classList.toggle("show");
-}
-function stayopen2() {
-  var popup = document.getElementById("myPopupemail2");
-  popup.classList.toggle("show");
-}
-function myFunctionemail3() {
-  var popup = document.getElementById("myPopupemail3");
-  popup.classList.toggle("show");
-}
-function stayopen3() {
-  var popup = document.getElementById("myPopupemail3");
-  popup.classList.toggle("show");
-}
-function OpenElectionGov() {
-  var popupOpenEG = document.getElementById("OpenElectionGov");
-  popupOpenEG.classList.toggle("show");
-}
-function OpenElectionGov() {
-  var popupOpenEG = document.getElementById("OpenElectionGov");
-  popupOpenEG.classList.toggle("show");
-}
-
-function OpenElectionSSen() {
-  var popupOpenESS = document.getElementById("OpenElectionSSen");
-  popupOpenESS.classList.toggle("show");
-}
-
-function OpenElectionJSen() {
-  var popupOpenEJS = document.getElementById("OpenElectionJSen");
-  popupOpenEJS.classList.toggle("show");
-}
-
-
-</script>
-
-
-<?php
-$q2 = mysqli_query($db_link,"SELECT ID,cname,state_influ FROM user WHERE state='$state' and inelection=2  order by state_influ DESC");
-      
-while($rows2[] = mysqli_fetch_assoc($q2));
-?>
-<td>
-<?php
-foreach($rows2 as $row2) {
-    ?>
-<br><?php
-}
-?>
-
-️<div class="popup" onclick="OpenElectionSSen()"><span style='font-size:50px;'>🗳</span>
-  <span class="popuptext" style="background: transparent;" id="OpenElectionSSen">
-      
-      
-      <?php
-        $ELECTIONPOSITIONNUMID=2;
-        include 'includes/electionInfo.php';
-        ?>
-      
-  </span>
-
-</div>
-<br>
-<div class="popup" onclick="myFunctionemail2()"><span style='font-size:50px;'>🌎</span>
-  <span class="popuptext" style="background: transparent;" id="myPopupemail2">
-        
-        <?php
-        $ELECTIONPOSITIONNUMID=2;
-        $thecall='includes/maps/'.$state.'map'.'.php';
-        include $thecall;
-        ?>
-  </span>
-</div>
-</td>
-<?php
-$q3 = mysqli_query($db_link,"SELECT ID,cname,state_influ FROM user WHERE state='$state' and inelection=3  order by state_influ DESC");
-      
-while($rows3[] = mysqli_fetch_assoc($q3));
-?>
-<td>
-<?php
-foreach($rows3 as $row3) {
-    ?>
-<br><?php
-}
-   ?>
-   ️<div class="popup" onclick="OpenElectionJSen()"><span style='font-size:50px;'>🗳</span>
-  <span class="popuptext" style="background: transparent;" id="OpenElectionJSen">
-      
-      
-      <?php
-        $ELECTIONPOSITIONNUMID=3;
-        include 'includes/electionInfo.php';
-        ?>
-      
-  </span></div>
-<br>
-   <div class="popup" onclick="myFunctionemail3()"><span style='font-size:50px;'>🌎</span>
-  <span class="popuptext" style="background: transparent;" id="myPopupemail3">
-        
-        <?php
-        $ELECTIONPOSITIONNUMID=3;
-        $thecall='includes/maps/'.$state.'map'.'.php';
-        include $thecall;
-        ?>
-  </span>
-</div>
-   </td>
-   </tr>
-   
-   </tbody></table>
    
    <div id="piechart"></div>
    <?php
-                  if ((isset($_POST['cstate'])))
-   {
-    $state=$_GET['state'];
-    $uid=$_SESSION["loggedin"];
-$sqlupdatec = "UPDATE user SET state ='$state' WHERE ID='$uid'";
-        mysqli_query($db_link, $sqlupdatec);
-   }
-   if ((isset($_POST['istate'])))
-   {
-    $state=$_GET['state'];
-    $uid=$_SESSION["loggedin"];
-$sql = "SELECT money FROM user  WHERE ID='$uid'";
-$result = $db_link->query($sql)or die($db_link->error);
-$money = $result->fetch_assoc();
-$money = $money['money'];
-$sql = "SELECT actionp FROM user  WHERE ID='$uid'";
-$result = $db_link->query($sql)or die($db_link->error);
-$actionp = $result->fetch_assoc();
-$actionp = $actionp['actionp'];
-$nstate = "SELECT nation_influ FROM user  WHERE ID='$uid'";
-$result = $db_link->query($nstate)or die($db_link->error);
-$nat_influ = $result->fetch_assoc();
-$nat_influ = $nat_influ['nation_influ'];
 
-$parid = "SELECT partyid FROM user  WHERE ID='$uid'";
-$result = $db_link->query($parid)or die($db_link->error);
-$upartyid = $result->fetch_assoc();
-$upartyid = $upartyid['partyid'];
- $pstate=$_GET['state'];
-$pgrabber='i'.$pstate;
-$pistate=strtolower($pgrabber);
-$stpopid = "SELECT population FROM statedemo  WHERE State='$pstate'";
-$result = $db_link->query($stpopid)or die($db_link->error);
-$spopid = $result->fetch_assoc();
-$spopid = $spopid['population'];
-$influincreasemodifier=5000+$spopid*($state_influ/1000);
-        if($actionp >= 5 && $nat_influ >=5 && $money >=10000)
-        {
-        $sqlupdatec = "UPDATE user SET money =money-10000 WHERE ID='$uid'";
-        mysqli_query($db_link, $sqlupdatec);
-        $sqlupdatep = "UPDATE user SET actionp =actionp-5 WHERE ID='$uid'";
-        mysqli_query($db_link, $sqlupdatep);
-        $sqlupdateinflu = "UPDATE parties SET $pistate=$pistate+1 WHERE partyid='$upartyid'";
-        mysqli_query($db_link, $sqlupdateinflu);
-        $messageu = "Increased Party Power in state ";
-echo "<script type='text/javascript'>alert('$messageu');</script>";
-        }elseif($actionp >=5 && $stateinflu <5 && money >=10000)
-        {
-            $messageu = "Not enough Influence ";
-echo "<script type='text/javascript'>alert('$messageu');</script>";
-        }elseif($actionp < 5 && $stateinflu >= 5 && money >=10000)
-        {
-            $messageu = "Not enough Actions ";
-echo "<script type='text/javascript'>alert('$messageu');</script>";
-        }
-        elseif($actionp >= 5 && $nat_influ >=5 && money < 10000)
-        {
-          $messageu = "Not enough Money";
-echo "<script type='text/javascript'>alert('$messageu');</script>";  
-        }
-        else
-        {
-            $messageu = "Not enough Actions and Local Influence";
-echo "<script type='text/javascript'>alert('$messageu');</script>";
-        } 
-   }
    ?>
 <?php
 
@@ -600,24 +511,66 @@ if ($q1) {
     }
 }
 ?>
-    <table class="blueTableplayers">
+    <script>
+        // When the user clicks on div, open the popup
+        function myFunctionemail() {
+
+            var popup = document.getElementById("myPopupemail");
+            popup.classList.toggle("show");
+
+        }
+        function myFunctionemail2() {
+            var popup = document.getElementById("myPopupemail2");
+            popup.classList.toggle("show");
+        }
+        function stayopen2() {
+            var popup = document.getElementById("myPopupemail2");
+            popup.classList.toggle("show");
+        }
+        function myFunctionemail3() {
+            var popup = document.getElementById("myPopupemail3");
+            popup.classList.toggle("show");
+        }
+        function stayopen3() {
+            var popup = document.getElementById("myPopupemail3");
+            popup.classList.toggle("show");
+        }
+        function OpenElectionGov() {
+            var popupOpenEG = document.getElementById("OpenElectionGov");
+            popupOpenEG.classList.toggle("show");
+        }
+        function OpenElectionGov() {
+            var popupOpenEG = document.getElementById("OpenElectionGov");
+            popupOpenEG.classList.toggle("show");
+        }
+
+        function OpenElectionSSen() {
+            var popupOpenESS = document.getElementById("OpenElectionSSen");
+            popupOpenESS.classList.toggle("show");
+        }
+
+        function OpenElectionJSen() {
+            var popupOpenEJS = document.getElementById("OpenElectionJSen");
+            popupOpenEJS.classList.toggle("show");
+        }
+
+
+    </script>
+    <h3>Players</h3>
+    <table class="blue"><th>Name</th><th>State Influence</th>
         <tbody>
-        <tr>
-            <td>Name</td>
-            <td>State Influence</td>
-        </tr>
         <?php
         if (!empty($rows)) {
             foreach ($rows as $row) {
                 if (!empty($row['ID'])) { // Ensure ID is valid
                     ?>
-                    <tr>
-                        <td>
+                    <tr class="blue">
+                        <td class="blue">
                             <a href="profile.php?id=<?php echo htmlspecialchars($row['ID']); ?>">
                                 <?php echo htmlspecialchars($row['cname']); ?>
                             </a>
                         </td>
-                        <td><?php echo htmlspecialchars($row['state_influ']); ?></td>
+                        <td class="blue"><?php echo htmlspecialchars($row['state_influ']); ?></td>
                     </tr>
                     <?php
                 }

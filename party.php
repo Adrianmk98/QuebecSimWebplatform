@@ -35,7 +35,7 @@ else
 $result = $db_link->query($pnamed)or die($db_link->error);
 $pnamedisplay = $result->fetch_assoc();
 $pnamedisplay = $pnamedisplay['pname'];
-echo $pnamedisplay;
+echo "<h2>".$pnamedisplay."</h2>";
 
 $parpic = "SELECT ppic FROM parties  WHERE partyid='$partyid'";
 $result = $db_link->query($parpic)or die($db_link->error);

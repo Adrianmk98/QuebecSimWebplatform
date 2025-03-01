@@ -158,7 +158,7 @@ $nation_influ = $nation_influ['nation_influ'];
     <table class="blueTablead">
         <tbody>
         <?php
-        $page=$_GET['page'];
+        $page=$_GET['page']??0;
         $page=$page*10;
         $ofsetting=$page+10;
 $pid=$_SESSION["loggedin"];
@@ -181,11 +181,11 @@ $sqlseen = "UPDATE mail SET seen =1 WHERE sorter='$ch'";
 $spic = "SELECT cpic FROM user  WHERE ID='$senderid'";
 $sendp = $db_link->query($spic)or die($db_link->error);
 $sendpic = $sendp->fetch_assoc();
-$sendpic = $sendpic['cpic'];
+$sendpic = $sendpic['cpic']??'Unknown';
 $sname = "SELECT cname FROM user  WHERE ID='$senderid'";
 $sendn = $db_link->query($sname)or die($db_link->error);
 $sendname = $sendn->fetch_assoc();
-$sendname = $sendname['cname'];      
+$sendname = $sendname['cname']??'Unknown';
         ?>
         <img src="https://i.imgur.com/<?php echo $sendpic; ?>" max-width="50" height="50"> <br>
         <a href="profile.php?id=<?php echo $row['sendid'] ?>"><?php echo $sendname ?></a><br>

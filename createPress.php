@@ -1,34 +1,64 @@
-<?php session_start();
-if (!(isset($_SESSION['loggedin'])))
-{
+<?php
+session_start();
+
+// Check if the user is logged in
+if (!(isset($_SESSION['loggedin']))) {
     header("Location: login.html");
     die();
-}else
-{
+} else {
     include 'includes/sqlcall.php';
     include 'includes/topbar.php';
-    $pid=$_SESSION["loggedin"];
-    $sqlhours = "UPDATE user SET hoursinactive =0 WHERE ID='$pid'";
+    $pid = $_SESSION["loggedin"];
+    $sqlhours = "UPDATE user SET hoursinactive = 0 WHERE ID = '$pid'";
     mysqli_query($db_link, $sqlhours);
 }
 
 // Handle form submission
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    $pressFlairID = $_POST['flair_id']; // Get the flair ID from the dropdown
-    $pressTitle = $_POST['title'];
-    $pressContent = $_POST['content'];  // The content from Quill
-    $createdAt = date('Y-m-d H:i:s');  // Get current timestamp
+    // Sanitize inputs
+    $pressFlairID = filter_var($_POST['flair_id'], FILTER_SANITIZE_NUMBER_INT); // Sanitize the flair ID
+    $pressTitle = filter_var($_POST['title'], FILTER_SANITIZE_STRING); // Sanitize the title
+    $pressContent = $_POST['content']; // Content is handled by Quill, so we just store the HTML
 
-    // Prepare and execute the SQL statement, including createdAt for the timestamp
-    $stmt = $db_link->prepare("INSERT INTO `press` (`pressFlairID`, `pressTitle`,`AuthorID`, `pressContent`, `createdAt`) VALUES (?, ?, ?, ?)");
-    $stmt->bind_param("issss", $pressFlairID, $pressTitle,$pid, $pressContent, $createdAt);
+    // Validate the inputs
+    if (empty($pressFlairID) || empty($pressTitle) || empty($pressContent)) {
+        echo "<p>Error: Please ensure all fields are filled in.</p>";
+        exit;
+    }
 
+    // If you want more specific validation, like the title length:
+    if (strlen($pressTitle) < 5 || strlen($pressTitle) > 100) {
+        echo "<p>Error: Title must be between 5 and 100 characters.</p>";
+        exit;
+    }
+
+    // Ensure pressFlairID is one of the allowed values (1, 2, or 3)
+    if (!in_array($pressFlairID, [1, 2, 3])) {
+        echo "<p>Error: Invalid flair ID.</p>";
+        exit;
+    }
+
+    $createdAt = date('Y-m-d H:i:s'); // Get current timestamp
+
+    // Prepare the SQL statement with the correct number of placeholders
+    $stmt = $db_link->prepare("INSERT INTO `press` (`pressFlairID`, `pressTitle`, `AuthorID`, `pressContent`, `createdAt`) VALUES (?, ?, ?, ?, ?)");
+
+    // Check if the statement is valid
+    if ($stmt === false) {
+        die('MySQL prepare failed: ' . $db_link->error);
+    }
+
+    // Bind the correct number of parameters
+    $stmt->bind_param("issss", $pressFlairID, $pressTitle, $pid, $pressContent, $createdAt);
+
+    // Execute the statement
     if ($stmt->execute()) {
         echo "<p>Press entry created successfully!</p>";
     } else {
         echo "<p>Error: " . $stmt->error . "</p>";
     }
 
+    // Close the statement
     $stmt->close();
 }
 ?>
@@ -119,12 +149,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         theme: 'snow',  // Snow theme for the editor
         modules: {
             toolbar: [
-                [{ 'header': '1'}, {'header': '2'}, { 'font': [] }],
-                [{ 'list': 'ordered'}, { 'list': 'bullet' }],
-                [{ 'align': [] }],
-                ['bold', 'italic', 'underline'],
-                ['link'],
-                ['image']
+                [{ 'header': '1'}, {'header': '2'}, { 'font': [] }], // Formatting
+                [{ 'list': 'ordered'}, { 'list': 'bullet' }], // List types
+                [{ 'align': [] }], // Alignment options
+                ['bold', 'italic', 'underline'], // Text styles
+                ['link'], // Insert link
+                ['image'] // Insert image
             ]
         }
     });
@@ -137,4 +167,3 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 </script>
 </body>
 </html>
-

@@ -444,10 +444,9 @@ $service = $service['ID'];
       <i class="fa fa-caret-down"></i>
     </button>
   <div class="dropdown-content">
-      <a href="#" >Senate</a>
-      <a href="#" >House</a>
-      <a href="#" >Senate History</a>
-      <a href="#" >House History</a>
+      <a href="currentBusiness.php" >Current Business</a>
+      <a href="pastBusiness.php" >Past Business</a>
+      <a href="submitBusiness.php" >Submit Business</a>
       
       </div>
       </div>

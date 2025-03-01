@@ -5,8 +5,8 @@ if (!(isset($_SESSION['loggedin'])))
    die();
 }else
 {
-    include '/home1/murvetop/includes/sqlcall.php';
-    include '/home1/murvetop/includes/topbar.php';
+    include 'includes/sqlcall.php';
+    include 'includes/topbar.php';
 $pid=$_SESSION["loggedin"];
 $sqlhours = "UPDATE user SET hoursinactive =0 WHERE ID='$pid'";
         mysqli_query($db_link, $sqlhours);

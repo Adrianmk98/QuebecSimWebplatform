@@ -13,6 +13,9 @@ $sqlhours = "UPDATE user SET hoursinactive =0 WHERE ID='$pid'";
 }
 ?>
  <meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="tableStyle.css">
+<link rel="stylesheet" href="headerStyle.css">
+<link rel="stylesheet" href="partyStyle.css">
 <style>
 
 body {
@@ -73,38 +76,22 @@ body {
   padding-left: 20px;
   padding-right: 20px;
 }
-table.blueTable {
-  border: 1px solid #1C6EA4;
-  background-color: #EEEEEE;
-  width: 30%;
-  text-align: center;
-  border-collapse: collapse;
-}
-table.blueTable td, table.blueTable th {
-  border: 1px solid #AAAAAA;
-  padding: 3px 2px;
-}
-table.blueTable tbody td {
-  font-size: 13px;
-}
-table.blueTable tr:nth-child(even) {
-  background: #D0E4F5;
-}
+
 </style>
 
 <?php
 
 
 ?><center><strong><?php
-echo "Parties"; ?> </strong><br>
+echo "<h2>Parties</h2>"; ?> </strong><br>
  <?php
    
    $self = $_SERVER['PHP_SELF'];
 ?><center>
               <form action=<?php echo $self ?> method="POST">
-                  <button type="submit" name="beindy">Become Independent</button><br><br></form>
+                  <button class='partyButton' type="submit" name="beindy">Become Independent</button><br><br></form>
                   <form action=createparty.php method="POST">
-                  <button type="submit" name="cparty">Create Party</button><br><br></form>
+                  <button class='partyButton' type="submit" name="cparty">Create Party</button><br><br></form>
                   </form></center>
 <?php
 if ((isset($_POST['beindy'])))
@@ -148,7 +135,7 @@ $partstrentot = $partstrentot['SUM(state_influ)'];
       
 while($prows[] = mysqli_fetch_assoc($part));
 ?>
-<table class="blueTable">
+<table>
      <tbody>
          <tr>
              <th>

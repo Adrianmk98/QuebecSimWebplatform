@@ -144,7 +144,7 @@ $nation_influ = $nation_influ['nation_influ'];
 $result = $db_link->query($state)or die($db_link->error);
 $state = $result->fetch_assoc();
 $state = $state['state'];
-   $sql = "SELECT population FROM statedemo  WHERE state='$state'";
+   $sql = "SELECT population FROM states  WHERE stateid='$state'";
 $result = $db_link->query($sql)or die($db_link->error);
 $statepop = $result->fetch_assoc();
 $statepop = $statepop['population'];

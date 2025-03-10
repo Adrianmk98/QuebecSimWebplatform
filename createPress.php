@@ -145,25 +145,62 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 <script>
     // Initialize the Quill editor
+    // Initialize the Quill editor
     var quill = new Quill('#editor', {
-        theme: 'snow',  // Snow theme for the editor
+        theme: 'snow',
         modules: {
             toolbar: [
-                [{ 'header': '1'}, {'header': '2'}, { 'font': [] }], // Formatting
-                [{ 'list': 'ordered'}, { 'list': 'bullet' }], // List types
-                [{ 'align': [] }], // Alignment options
-                ['bold', 'italic', 'underline'], // Text styles
-                ['link'], // Insert link
-                ['image'] // Insert image
+                [{ 'header': '1' }, { 'header': '2' }, { 'font': [] }],
+                [{ 'list': 'ordered' }, { 'list': 'bullet' }],
+                [{ 'align': [] }],
+                ['bold', 'italic', 'underline'],
+                ['link'],
+                ['image']
             ]
         }
     });
 
-    // Handle form submission to add editor content into hidden input
+    // Intercept image uploads
+    quill.getModule('toolbar').addHandler('image', function () {
+        let input = document.createElement('input');
+        input.setAttribute('type', 'file');
+        input.setAttribute('accept', 'image/*');
+
+        input.click();
+
+        input.onchange = function () {
+            let file = input.files[0];
+            if (!file) return;
+
+            let formData = new FormData();
+            formData.append('image', file);
+
+            fetch('uploadImage.php', {
+                method: 'POST',
+                body: formData
+            })
+                .then(response => response.json())
+                .then(result => {
+                    if (result.success) {
+                        let imgURL = result.imageUrl;
+                        let range = quill.getSelection();
+                        quill.insertEmbed(range.index, 'image', imgURL);
+                    } else {
+                        alert('Image upload failed: ' + result.error);
+                    }
+                })
+                .catch(error => {
+                    console.error('Upload error:', error);
+                    alert('Image upload failed.');
+                });
+        };
+    });
+
+    // Handle form submission to save editor content
     document.querySelector('form').onsubmit = function () {
-        var content = document.querySelector('#content');
-        content.value = quill.root.innerHTML;  // Save the content from the editor
+        document.querySelector('#content').value = quill.root.innerHTML;
     };
+
 </script>
 </body>
 </html>
